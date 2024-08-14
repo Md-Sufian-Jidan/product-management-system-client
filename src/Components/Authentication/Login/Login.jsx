@@ -1,9 +1,54 @@
-// import { Bounce, JackInTheBox, Slide, Zoom } from "react-awesome-reveal";
-
 import { Bounce, JackInTheBox, Slide, Zoom } from "react-awesome-reveal";
+import useAuth from "../../../Hooks/useAuth";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 
 
 const Login = () => {
+
+    const navigate = useNavigate()
+    // show password
+    const [show, setShow] = useState(false);
+    const { isLoading, googleLogin, signInUser } = useAuth();
+    if (isLoading) {
+        <span className="loading loading-bars loading-lg"></span>
+    }
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const email = form.email.value;
+        const password = form.password.value;
+        signInUser(email, password)
+            .then((result) => {
+                console.log(result.user);
+                navigate(location?.state ? location.state : '/');
+                return toast.success('User Login Successfully');
+            })
+            .catch((error) => {
+                console.log(error);
+                return toast.error('opps! Something wrong please reload the page and try again')
+            })
+    }
+
+    //google login
+    const handleGoogleLogin = () => {
+        googleLogin()
+            .then((result) => {
+                console.log(result.user);
+                navigate(location?.state ? location.state : '/');
+                return toast.success('User Login Successfully')
+            })
+            .catch((error) => {
+                console.log(error);
+                return toast.error('Opps! Something wrong please reload the page')
+            })
+    };
+
+
+
     return (
         <div className="md:w-1/2 w-3/4 mx-auto my-3" >
             <JackInTheBox>
@@ -52,12 +97,12 @@ const Login = () => {
                     <span>Google Login</span>
                 </div>
             </Bounce>
-            <Bounce delay={1000}>
+            {/* <Bounce delay={1000}>
                 <div onClick={handleGithubLogin} className="flex items-center gap-3 btn text-xl my-2">
                     <FaGithub size={20} />
                     <span>Github Login</span>
                 </div>
-            </Bounce>
+            </Bounce> */}
         </div>
     );
 };
